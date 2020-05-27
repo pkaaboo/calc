@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, StatusBar, SafeAreaView } from 'react-native';
-
 import Row from './components/Row';
 import Button from './components/Button';
+import calculator, { initialState } from './util/calculator';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,85 +19,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const initialState = {
-  currentValue: '0',
-  operator: null,
-  previousValue: null,
-};
+
 
 export default class App extends React.Component {
 
   state = initialState
 
   handleTap = (type, value) => {
-    this.setState(state => {
-      if (type === 'number') {
-        if (state.currentValue === 0) {
-          return { currentValue: `${value}` }
-        }
-        return {
-          currentValue: `${state.currentValue}${value}`
-        }
-      }
-      if (type === 'operator') {
-        return {
-          operator: value,
-          previousValue: state.currentValue,
-          currentValue: "0"
-        }
-      }
-      if (type === 'equal') {
-        const { currentValue, previousValue, operator } = state
-        const current = parseFloat(currentValue)
-        const previous = parseFloat(previousValue)
-        const resetState = {
-          operator: null,
-          previousValue: null
-        }
-
-        switch (operator) {
-          case '/':
-            return {
-              currentValue: previous / current,
-              ...resetState
-            }
-          case '*':
-            return {
-              currentValue: previous * current,
-              ...resetState
-
-            }
-          case '+':
-            return {
-              currentValue: previous + current,
-              ...resetState
-
-            }
-          case '-':
-            return {
-              currentValue: previous - current,
-              ...resetState
-            }
-          default:
-            return state
-        }
-      }
-      if (type === 'clear') {
-        return initialState;
-
-      }
-      if (type === 'posneg') {
-        return {
-          currentValue: `${parseFloat(state.currentValue) * -1}`
-        }
-      }
-      if (type === 'percentage') {
-        return {
-          currentValue: `${parseFloat(state.currentValue) * 0.01}`
-        }
-      }
-      return state
-    })
+    this.setState(state => calculator(type, value, state));
   }
 
 
